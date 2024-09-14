@@ -1,0 +1,36 @@
+//pin definitions
+int ledPinRED=7; //connect resistor with positive end of led-pin and with the corresponding pin in the arduino
+int ledPinBLUE=3;
+
+int buttonPinFood = 8;   // Red button connected to pin 8
+int buttonPinWater = 4;  // Blue button connected to pin 4
+
+void setup() {
+  //setup pin modes
+  pinMode(ledPinRED,OUTPUT); //declare led pins as outputs
+  pinMode(ledPinBLUE,OUTPUT);
+
+  // Setup pin modes for buttons
+  pinMode(buttonPinFood, INPUT_PULLUP);    // Declare red button pin as input with pull-up resistor
+  pinMode(buttonPinWater, INPUT_PULLUP);   // Declare blue button pin as input with pull-u
+}
+
+void loop() {
+  // Read the state of the buttons
+  int buttonStateFood = digitalRead(buttonPinRED);
+  int buttonStateWater = digitalRead(buttonPinBLUE);
+
+    // Check if the red button is pressed
+  if (buttonStateFood == LOW) { // Button pressed (active low)
+    digitalWrite(ledPinRED, HIGH);   // Turn on red LED
+  } else {
+    digitalWrite(ledPinRED, LOW);    // Turn off red LED
+  }
+
+  // Check if the blue button is pressed
+  if (buttonStateWater == LOW) { // Button pressed (active low)
+    digitalWrite(ledPinBLUE, HIGH);  // Turn on blue LED
+  } else {
+    digitalWrite(ledPinBLUE, LOW);   // Turn off blue LED
+  }
+}
