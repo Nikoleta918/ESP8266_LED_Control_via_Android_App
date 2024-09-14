@@ -22,21 +22,4 @@
         android:layout_below="@id/button_water"
         android:layout_centerHorizontal="true"/>
 
-    <Button
-        android:id="@+id/button_set_water_schedule"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Set Water Schedule"
-        android:layout_below="@id/button_food"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"/>
-
-    <Button
-        android:id="@+id/button_set_food_schedule"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Set Food Schedule"
-        android:layout_below="@id/button_set_water_schedule"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"/>
 </RelativeLayout>
