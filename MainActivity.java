@@ -1,27 +1,31 @@
-package com.example.myapplication; //Java packages help manage namespaces by grouping related classes and interfaces together.
-//This ensures that classes with the same name can coexist in different packages without causing naming conflicts.
+package com.example.myapplication;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Scanner;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 
 public class MainActivity extends AppCompatActivity {
 
-    @Override // @Override instructs the compiler that you intend to override a method in the superclass
-    protected void onCreate(Bundle savedInstanceState) { //This means that MainActivity inherits the properties and behaviors (methods) of AppCompatActivity.
-        super.onCreate(savedInstanceState); //This method is called when the user clicks on your app's icon.This method is required for every activity, as it sets the layout.
-        EdgeToEdge.enable(this); //Edge-to-edge mode allows the content to be drawn behind system bars like the status bar and navigation bar, giving a more immersive experience.
-        setContentView(R.layout.activity_main); //This method sets the UI layout for the activity. The layout file activity_main.xml is loaded and displayed on the screen.
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {  //a listener is set to adjust the padding of the main view
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());    //view so that the content doesn't overlap with system bars, making the UI responsive to different device configurations and system UI changes.
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+    private String esp8266IP = "http://192.168.243.91"; // Replace with your ESP8266's local IP
+    private ExecutorService executorService;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Initialize ExecutorService
+        executorService = Executors.newSingleThreadExecutor();
 
         // Find buttons by ID
         Button buttonWater = findViewById(R.id.button_water);
@@ -30,10 +34,58 @@ public class MainActivity extends AppCompatActivity {
         // Set onClick listeners for buttons
         buttonWater.setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "Water button clicked", Toast.LENGTH_SHORT).show();
+            sendRequest("/blue/on");
         });
 
         buttonFood.setOnClickListener(v -> {
             Toast.makeText(MainActivity.this, "Food button clicked", Toast.LENGTH_SHORT).show();
+            sendRequest("/red/on");
         });
+    }
+
+    // Function to send HTTP request to ESP8266
+    private void sendRequest(String endpoint) {
+        executorService.execute(() -> {
+            try {
+                URL url = new URL(esp8266IP + endpoint);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setConnectTimeout(5000); // 5 seconds connect timeout
+                urlConnection.setReadTimeout(5000);    // 5 seconds read timeout
+                urlConnection.connect();
+                int responseCode = urlConnection.getResponseCode();
+
+                runOnUiThread(() -> {
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        Toast.makeText(MainActivity.this, "Request successful!", Toast.LENGTH_SHORT).show();
+                        Log.d("HTTP", "Request successful!");
+                    } else {
+                        Toast.makeText(MainActivity.this, "Request failed. Code: " + responseCode, Toast.LENGTH_SHORT).show();
+                        Log.d("HTTP", "Request failed. Code: " + responseCode);
+                    }
+                });
+
+                urlConnection.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() -> {
+                    Toast.makeText(MainActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+    // Helper function to convert InputStream to String
+    private String convertStreamToString(InputStream is) {
+        Scanner scanner = new Scanner(is).useDelimiter("\\A");
+        return scanner.hasNext() ? scanner.next() : "";
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (executorService != null) {
+            executorService.shutdown();
+        }
     }
 }
