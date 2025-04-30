@@ -1,5 +1,5 @@
 #include <ESP8266WiFi.h>
-//How it works: The Arduino (with WiFi) acts as a server or client, and the Python app sends HTTP requests or opens sockets.
+//How it works: The Arduino (with WiFi) acts as a server or client, and the Java app sends HTTP requests or opens sockets.
 
 // HTTP Server on Arduino
 
