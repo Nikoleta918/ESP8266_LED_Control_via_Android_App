@@ -7,7 +7,7 @@
 //Java sends HTTP requests to configure it.
 
 const char* ssid = "AndroidAPFB58";  // Replace with your WiFi SSID
-const char* password = "nikoletakiwow";  // Replace with your WiFi password
+const char* password = "123";  // Replace with your WiFi password
 
 // Define LED pins
 const int ledRed = D1;  // GPIO5 (D1 on NodeMCU)
