@@ -1,4 +1,10 @@
 #include <ESP8266WiFi.h>
+//How it works: The Arduino (with WiFi) acts as a server or client, and the Python app sends HTTP requests or opens sockets.
+
+// HTTP Server on Arduino
+
+//Arduino runs a web server.
+//Java sends HTTP requests to configure it.
 
 const char* ssid = "AndroidAPFB58";  // Replace with your WiFi SSID
 const char* password = "nikoletakiwow";  // Replace with your WiFi password
